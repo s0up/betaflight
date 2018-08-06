@@ -443,7 +443,7 @@ int16_t getTargetBearing(void)
 
     gpsTarget_t target;
 
-    if(legHit == false){
+    if(legHit == false && leg.lat != 0 && leg.lon != 0){
         GPS_calculateDistanceAndDirectionToTarget(&target, leg.lat, leg.lon);
 
         if(target.distanceToTarget < 100){
