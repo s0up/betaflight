@@ -112,3 +112,5 @@ void rescueAttainPosition(void);
 float gpsRescueGetYawRate(void);
 float gpsRescueGetThrottle(void);
 bool gpsRescueIsConfigured(void);
+
+int16_t getTargetBearing(void);

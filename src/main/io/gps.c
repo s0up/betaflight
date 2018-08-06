@@ -1287,6 +1287,20 @@ void GPS_calculateDistanceAndDirectionToHome(void)
     }
 }
 
+void GPS_calculateDistanceAndDirectionToTarget(gpsTarget_t *target, int32_t lat, int32_t lon)
+{
+    if (STATE(GPS_FIX_HOME)) {      // If we don't have home set, do not display anything
+        uint32_t dist;
+        int32_t dir;
+        GPS_distance_cm_bearing(&gpsSol.llh.lat, &gpsSol.llh.lon, &lat, &lon, &dist, &dir);
+        target->distanceToTarget = dist / 100;
+        target->directionToTarget = dir / 100;
+    } else {
+        target->distanceToTarget = 0;
+        target->directionToTarget = 0;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Calculate our current speed vector from gps position data
 //

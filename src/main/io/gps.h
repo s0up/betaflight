@@ -89,6 +89,11 @@ typedef struct gpsLocation_s {
     int32_t alt;                    // altitude in 0.01m
 } gpsLocation_t;
 
+typedef struct gpsTarget_s {
+    int16_t distanceToTarget;
+    int16_t directionToTarget;
+} gpsTarget_t;
+
 typedef struct gpsSolutionData_s {
     gpsLocation_t llh;
     uint16_t groundSpeed;           // speed in 0.1m/s
@@ -161,4 +166,5 @@ void onGpsNewData(void);
 void GPS_reset_home_position(void);
 void GPS_calc_longitude_scaling(int32_t lat);
 void GPS_distance_cm_bearing(int32_t *currentLat1, int32_t *currentLon1, int32_t *destinationLat2, int32_t *destinationLon2, uint32_t *dist, int32_t *bearing);
+void GPS_calculateDistanceAndDirectionToTarget(gpsTarget_t *target, int32_t lat, int32_t lon);
 

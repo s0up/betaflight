@@ -75,6 +75,9 @@ PG_RESET_TEMPLATE(gpsRescueConfig_t, gpsRescueConfig,
     .minSats = 8
 );
 
+static bool legHit = false;
+static gpsLocation_t leg = { 0, 0, 0};
+
 static uint16_t rescueThrottle;
 static float    rescueYaw;
 
@@ -119,6 +122,8 @@ void updateGPSRescueState(void)
         idleTasks();
         break;
     case RESCUE_INITIALIZE:
+        legHit = false;
+
         if (hoverThrottle == 0) { //no actual throttle data yet, let's use the default.
             hoverThrottle = gpsRescueConfig()->throttleHover;
         }
@@ -357,7 +362,7 @@ void rescueAttainPosition()
 {
     // Point to home if that is in our intent
     if (rescueState.intent.crosstrack) {
-        setBearing(rescueState.sensor.directionToHome);
+        setBearing(getTargetBearing());
     }
 
     if (!newGPSData) {
@@ -431,6 +436,24 @@ void setBearing(int16_t desiredHeading)
     // an error window and then scale the requested rate down inside
     // the window as error approaches 0.
     rescueYaw = -constrainf(errorAngle / GPS_RESCUE_RATE_SCALE_DEGREES * GPS_RESCUE_MAX_YAW_RATE, -GPS_RESCUE_MAX_YAW_RATE, GPS_RESCUE_MAX_YAW_RATE);
+}
+
+int16_t getTargetBearing(void)
+{
+
+    gpsTarget_t target;
+
+    if(legHit == false){
+        GPS_calculateDistanceAndDirectionToTarget(&target, leg.lat, leg.lon);
+
+        if(target.distanceToTarget < 100){
+            legHit = true;
+        }
+
+        return target.directionToTarget;
+    }
+
+    return rescueState.sensor.directionToHome;
 }
 
 float gpsRescueGetYawRate(void)
